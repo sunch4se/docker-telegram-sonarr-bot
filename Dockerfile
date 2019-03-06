@@ -1,5 +1,9 @@
-FROM mhart/alpine-node:latest
-MAINTAINER subzero79
+#FROM mhart/alpine-node:latest
+FROM arm64v8/node:alpine
+
+COPY --from=resin/aarch64-alpine:latest ["/usr/bin/qemu*", "/usr/bin/resin-xbuild*", "/usr/bin/cross-build*",  "/usr/bin/"]
+
+RUN [ "cross-build-start" ]
 
 ADD src/ /root/
 
@@ -14,6 +18,8 @@ RUN mv /root/supervisord.conf /etc/supervisord.conf && \
 RUN cd /app/telegram-sonarr-bot-master && npm install
 
 RUN apk del unzip wget
+
+RUN [ "cross-build-end" ]
 
 VOLUME /config
 
